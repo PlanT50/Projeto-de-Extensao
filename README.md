@@ -1,6 +1,6 @@
 # RevGas Chatbot
 
-Backend inicial em Java para um chatbot comercial. A estrutura cobre a coleta de dados do cliente e do pedido, consulta segura ao ERP e encaminhamento para atendimento humano. A API do ERP e o provedor de IA ainda não estão conectados: faltam documentação, regras de negócio e credenciais fornecidas pela Flow/RevGas.
+Backend inicial em Java para um chatbot comercial. A estrutura cobre a coleta de dados do cliente e do pedido e prepara pontos de integração com o ERP e atendimento humano. A API do ERP e o provedor de IA ainda não estão conectados; faltam documentação acessível, regras de negócio e credenciais fornecidas pela Flow/RevGas.
 
 ## Requisitos
 

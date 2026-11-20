@@ -21,19 +21,20 @@ public class ChatService {
     }
 
     public ChatResponse handle(ChatRequest request) {
-        var existing = conversations.findById(request.conversationId());
-        if (existing.isEmpty()) {
-            Conversation started = conversations.save(new Conversation(request.conversationId()));
-            return response(started, "Olá! Posso ajudar com seu pedido. Qual é seu nome?", false);
-        }
-        Conversation conversation = existing.get();
         String message = request.message().trim();
         String normalized = message.toLowerCase(Locale.ROOT);
+        var existing = conversations.findById(request.conversationId());
+        Conversation conversation = existing.orElseGet(() -> new Conversation(request.conversationId()));
 
         if (asksForPerson(normalized)) {
             conversation.setStage(ConversationStage.HANDED_OFF);
             conversations.save(conversation);
             return response(conversation, "Vou encaminhar sua conversa para um atendente. O atendimento humano ainda precisa ser conectado à plataforma da Flow.", true);
+        }
+
+        if (existing.isEmpty()) {
+            conversations.save(conversation);
+            return response(conversation, "Olá! Posso ajudar com seu pedido. Qual é seu nome?", false);
         }
 
         if (conversation.getStage() == ConversationStage.HANDED_OFF) {
@@ -67,26 +68,32 @@ public class ChatService {
         };
 
         conversations.save(conversation);
-        return response(conversation, reply, false);
+        return response(conversation, reply, conversation.getStage() == ConversationStage.HANDED_OFF);
     }
 
     private String collectQuantity(Conversation conversation, String message) {
+        var matcher = java.util.regex.Pattern.compile("^\\s*(\\d+)").matcher(message);
+        if (!matcher.find()) {
+            return "Não consegui identificar a quantidade. Informe o número de unidades, por exemplo: 2.";
+        }
         try {
-            int quantity = Integer.parseInt(message.replaceAll("[^0-9]", ""));
-            if (quantity < 1 || quantity > 1000) return "Informe uma quantidade entre 1 e 1000 unidades.";
+            int quantity = Integer.parseInt(matcher.group(1));
+            if (quantity < 1) return "Informe uma quantidade inteira maior que zero.";
             conversation.getOrder().setQuantity(quantity);
             conversation.setStage(ConversationStage.COLLECTING_ADDRESS);
             return "Para qual endereço devemos entregar?";
         } catch (NumberFormatException exception) {
-            return "Não consegui identificar a quantidade. Informe apenas o número de unidades.";
+            return "A quantidade informada é muito alta. Informe uma quantidade menor.";
         }
     }
 
     private String confirmOrder(Conversation conversation, String normalized) {
         if (normalized.matches(".*\\b(sim|confirmo|correto|confirmar)\\b.*")) {
-            return erpStatus.isConfigured()
-                    ? "Confirmação recebida. A integração de criação de pedido ainda precisa ser implementada."
-                    : "Dados anotados, mas a API do ERP ainda não está conectada. Nenhum pedido foi criado. A equipe pode continuar o atendimento.";
+            if (erpStatus.isConfigured()) {
+                return "Confirmação recebida. A integração de criação de pedido ainda precisa ser implementada.";
+            }
+            conversation.setStage(ConversationStage.HANDED_OFF);
+            return "Dados confirmados, mas a API do ERP ainda não está conectada. Nenhum pedido foi criado; o atendimento humano ainda precisa ser conectado.";
         }
         if (normalized.matches(".*\\b(nao|não|corrigir|alterar)\\b.*")) {
             conversation.setStage(ConversationStage.COLLECTING_NAME);
