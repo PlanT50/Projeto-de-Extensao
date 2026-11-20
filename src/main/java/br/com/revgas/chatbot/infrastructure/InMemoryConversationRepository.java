@@ -14,6 +14,9 @@ public class InMemoryConversationRepository implements ConversationRepository {
 
     @Override
     public Optional<Conversation> findById(String id) {
+        if (id == null || id.isBlank()) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(conversations.get(id));
     }
 
