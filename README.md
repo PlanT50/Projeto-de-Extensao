@@ -1,6 +1,6 @@
 # RevGas Chatbot
 
-Backend inicial em Java para um chatbot comercial. A estrutura cobre a coleta de dados do cliente e do pedido, consulta segura ao ERP e encaminhamento para atendimento humano. A API do ERP e o provedor de IA ainda não foram conectados: faltam documentação, regras de negócio e credenciais fornecidas pela Flow/RevGas.
+Backend inicial em Java para um chatbot comercial. A estrutura cobre a coleta de dados do cliente e do pedido, consulta segura ao ERP e encaminhamento para atendimento humano. A API do ERP e o provedor de IA ainda não estão conectados: faltam documentação, regras de negócio e credenciais fornecidas pela Flow/RevGas.
 
 ## Requisitos
 
@@ -38,7 +38,7 @@ Na primeira mensagem, omita `conversationId`; a resposta cria um identificador e
 
 ## Próximos passos para integrar a API
 
-Compartilhe um destes itens, sem credenciais: especificação OpenAPI/Swagger (JSON/YAML), coleção Postman exportada, documentação oficial ou URL pública da documentação. Inclua exemplos de requisição/resposta e quais operações a equipe autorizou (por exemplo, consultar catálogo/estoque, criar pedido, consultar cliente). Não envie tokens, senhas, chaves privadas ou dados reais de clientes. Depois do mapeamento, as credenciais podem ser configuradas localmente por variáveis de ambiente a partir de `.env.example`.
+Documentação RevGás: [Autenticação e permissão](https://revgas.stoplight.io/docs/revgas-api/en39g0vb0qwsb-autenticacao-e-permissao). Para implementar os endpoints, precisamos da especificação OpenAPI/Swagger (JSON/YAML), coleção Postman exportada ou documentação pública com operações, modelos de requisição/resposta e exemplos. Não envie tokens, senhas, chaves privadas ou dados reais de clientes. Depois do mapeamento, as credenciais podem ser configuradas localmente por variáveis de ambiente a partir de `.env.example`.
 
 Antes de ativar operações que criam pedidos ou alteram dados, precisamos confirmar autenticação, escopos, campos obrigatórios, regras de confirmação do cliente, tratamento de erros, limites e ambiente de homologação.
 
