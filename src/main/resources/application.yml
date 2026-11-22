@@ -7,6 +7,12 @@ spring:
 server:
   port: ${SERVER_PORT:8080}
 
+# CFOP endpoint from the supplied sample; verify URL and auth with RevGas.
+revgas:
+  api:
+    base-url: ${ERP_API_BASE_URL:https://api.revgas.com/v1}
+    token: ${ERP_API_TOKEN:}
+
 management:
   endpoints:
     web:

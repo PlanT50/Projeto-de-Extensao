@@ -45,3 +45,21 @@ Antes de ativar operações que criam pedidos ou alteram dados, precisamos confi
 ## GitHub
 
 Repositório do projeto: https://github.com/PlanT50/Projeto-de-Extensao. Nunca adicione `.env` ou credenciais ao Git.
+
+## Consulta de CFOP (somente leitura)
+
+O cliente Java fornecido pela RevGas descreve `GET /v1/cfops`. O projeto disponibiliza essa consulta em `GET /api/v1/erp/cfops`, encaminhando filtros opcionais `page`, `page_size`, `code`, `description`, `departure`, `incoming`, `return` e `fuel`. Exemplo:
+
+```text
+GET http://localhost:8080/api/v1/erp/cfops?page=1&page_size=10&fuel=true
+```
+
+Para carregar todas as páginas, use `GET /api/v1/erp/cfops/all` com os mesmos filtros. No PowerShell, configure as variáveis antes de iniciar a aplicação:
+
+```powershell
+$env:ERP_API_BASE_URL = "https://api.revgas.com/v1"
+$env:ERP_API_TOKEN = "seu-token"
+mvn spring-boot:run
+```
+
+Configure `ERP_API_BASE_URL` e `ERP_API_TOKEN` no ambiente antes da consulta. O exemplo recebido documenta o token diretamente no header `Authorization`, sem prefixo `Bearer`. Esta integração só consulta dados: não cria pedidos nem transfere conversas para atendentes. O arquivo recebido indica que alguns nomes de filtros podem ser inferidos/traduzidos; confirme URL, autenticação, filtros e formato da resposta na documentação oficial antes de usar em produção.
